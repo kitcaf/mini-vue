@@ -3,19 +3,26 @@
  * 依赖收集与派发更新算法
  */
 
+import { extend } from "@mini-vue/shared";
+
 //全局变量
 let activatEffect: undefined | ReactiveEffect //指针
 
 let targetMap = new WeakMap() //依赖图谱
 
+export interface ReactiveEffectOptions {
+    scheduler?: Function; // 自定义拦截器
+    onStop?: () => void;
+}
+
 //ReactiveEffect（副作用）类 -- 存储在dep里面
 export class ReactiveEffect {
-    _fn: Function
+    private _fn: Function
     deps: Set<ReactiveEffect>[] = []; //双向绑定 反向收集 deps
     active: Boolean = true //标志位
     onStop?: () => void //自定义回调
 
-    constructor(fn: Function) {
+    constructor(fn: Function, public scheduler?: Function) {
         this._fn = fn
     }
 
@@ -44,6 +51,7 @@ export class ReactiveEffect {
     }
 }
 
+//其实这里就相当于静态成员，可以减小内存，因为不涉及到this的调用
 function cleanupEffect(effect: ReactiveEffect) {
     effect.deps.forEach(dep => {
         dep.delete(effect)
@@ -51,9 +59,11 @@ function cleanupEffect(effect: ReactiveEffect) {
     effect.deps.length = 0
 }
 
-export function effect(fn: Function) {
+export function effect(fn: Function, option: ReactiveEffectOptions = {}) {
     //创建ReactiveEffect
-    const _reactiveEffect = new ReactiveEffect(fn)
+    const _reactiveEffect = new ReactiveEffect(fn, option.scheduler)
+    extend(_reactiveEffect, option)
+
     _reactiveEffect.run()
 
     //返回_reactiveEffect中的run方法
@@ -61,8 +71,18 @@ export function effect(fn: Function) {
     //因此需要bind出来
     const runner: any = _reactiveEffect.run.bind(_reactiveEffect)
     //runner函数在挂载_reactiveEffect对象
-    runner._effect = _reactiveEffect
+    runner.effect = _reactiveEffect
+
     return runner
+}
+
+/**
+ * 对外暴露 Stop
+ * @param runner 
+ */
+export function stop(runner: any) {
+    // 通过 runner 上的 .effect 属性找到实例，调用 stop
+    runner.effect.stop()
 }
 
 /**
@@ -93,7 +113,7 @@ export function track(target: any, key: String | symbol) {
 }
 
 // 抽离具体的收集逻辑，方便后续复用
-export function trackEffects(dep: Set<ReactiveEffect>) {
+function trackEffects(dep: Set<ReactiveEffect>) {
     //activatEffect和判重
     if (activatEffect && !dep.has(activatEffect)) {
         // 1. 正向收集：Dep -> Effect
@@ -115,22 +135,16 @@ export function trigger(target: any, key: String | symbol) {
     triggerEffects(dep)
 }
 
-export function triggerEffects(dep: Set<ReactiveEffect>) {
+function triggerEffects(dep: Set<ReactiveEffect>) {
     if (dep) {
         for (const effect of dep) {//Set类型的for循环, of
-            effect.run()
+            if (effect.scheduler)
+                effect.scheduler() //控制权交换给用户
+            else effect.run()
         }
     }
 }
 
-/**
- * 对外暴露 API
- * @param runner 
- */
-export function stop(runner: any) {
-    // 通过 runner 上的 .effect 属性找到实例，调用 stop
-    runner.effect.stop();
-}
 
 
 

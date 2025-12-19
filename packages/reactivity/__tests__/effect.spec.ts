@@ -1,6 +1,6 @@
-import { it, describe, expect } from "vitest"
+import { it, describe, expect, vi } from "vitest"
 import { reactive } from "../src/reactive";
-import { effect } from "../src/effect";
+import { effect, stop } from "../src/effect";
 
 const user = {
     name: "miniVue",
@@ -31,5 +31,40 @@ describe("effect test", () => {
         //测试响应式
         user.age++
         expect(nextAge).toBe(12)
+    })
+
+    it("reactive stop", () => {
+        const user = reactive({ age: 10 })
+        let nextAge;
+        const runner = effect(() => {
+            nextAge = user.age + 1
+        })
+        expect(nextAge).toBe(11)
+        stop(runner)
+        user.age++
+        expect(nextAge).toBe(11)
+    })
+
+    it("reactivate scheduler", () => {
+        const user = reactive({ age: 10 })
+        let nextAge;
+        let run: any
+
+        const scheduler = vi.fn(() => {
+            run = runner;
+        })
+
+        let runner = effect(() => {
+            nextAge = user.age
+        }, { scheduler: scheduler })
+
+        expect(nextAge).toBe(10)
+        expect(scheduler).toBeCalledTimes(0) //被调用0次
+
+        user.age++ //应该副作用函数不调用，scheduler执行一次
+
+        expect(nextAge).toBe(10)
+        expect(scheduler).toBeCalledTimes(1)
+
     })
 })
