@@ -1,3 +1,4 @@
+import { mutableHandlers, readonlyHandlers } from "./baseHandlers"
 import { track, trigger } from "./effect"
 /**
  * ReactiveObject：
@@ -10,30 +11,18 @@ import { track, trigger } from "./effect"
  * @param raw 
  */
 export function reactive(raw: any) {
-    return new Proxy(raw, {
-        // target (Object): 原生对象 
-        // key (String | Symbol): 属性名
-        //  receiver (Object): 代理对象本身
-        get(target, key, receiver) {
-            // const res = target[key] 对象有get属性并且里面有this的嵌套依赖问题
-            // 保证每一个属性都会触发到代理的get保证收集成功依赖
-            console.log(`Proxy getter触发 ${String(key)} ${target}`)
-            // const res = target[key]
-            const res = Reflect.get(target, key, receiver)
-            track(target, key)
-            return res
-        },
-
-        set(target, key, newValue, receiver) {
-            console.log(`Proxy setter触发 ${key as String} ${target}`)
-            // target[key] = newValue
-            const res = Reflect.set(target, key, newValue, receiver)
-            trigger(target, key)
-            return true
-        }
-    })
+    return createActiveObject(raw, mutableHandlers)
 }
 
-export function creatReactive() {
+/**
+ * readonlyReactive 返回readonlyReactive对象
+ * @param raw 
+ */
+export function readonly(raw: any) {
+    return createActiveObject(raw, readonlyHandlers)
+}
 
+// 抽离通用的 Proxy 创建逻辑
+function createActiveObject(raw: any, baseHandlers: any) {
+    return new Proxy(raw, baseHandlers);
 }
