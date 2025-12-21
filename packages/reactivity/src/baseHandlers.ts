@@ -1,4 +1,4 @@
-import { isObject } from "@mini-vue/shared";
+import { extend, isObject } from "@mini-vue/shared";
 import { track, trigger } from "./effect";
 import { reactive, ReactiveFlag, readonly } from "./reactive";
 
@@ -7,7 +7,7 @@ import { reactive, ReactiveFlag, readonly } from "./reactive";
  * @param isReadonly 
  * @returns 
  */
-export function createGetter(isReadonly = false) {
+export function createGetter(isReadonly = false, shallow = false) {
     // target (Object): 原生对象 
     // key (String | Symbol): 属性名
     //  receiver (Object): 代理对象本身
@@ -28,6 +28,9 @@ export function createGetter(isReadonly = false) {
         const res = Reflect.get(target, key, receiver)
         //注意isObject(res)要isObject(res)之前
         if (!isReadonly) track(target, key)
+
+        //shallow 直接返回
+        if (shallow) return res
 
         // 根据返回值res判断，如果res是对象，需要再根据这个对象建立响应式
         // 最后要不要返回响应式对象，或者需不需要将obj = {a: { b : 1}}
@@ -67,6 +70,7 @@ const get = createGetter();
 const set = createSetter();
 const readonlyGet = createGetter(true)
 const readonlySet = createSetter(true)
+const shallowReadonlyGet = createGetter(true, true)
 
 /**
  * 导出 mutableHandlers对象 -- 这个对象就不用多次创建了
@@ -83,3 +87,10 @@ export const readonlyHandlers = {
     get: readonlyGet,
     set: readonlySet
 };
+
+/**
+ * 导出 shallowReadonlyHandlers对象，直接使用extend进行复用
+ */
+export const shallowReadonlyHandlers = extend({}, readonlyHandlers, {
+    get: shallowReadonlyGet
+})

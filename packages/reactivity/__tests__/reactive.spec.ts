@@ -1,5 +1,5 @@
 import { it, describe, expect } from "vitest"
-import { isReactive, isReadonly, reactive, readonly } from "../src/reactive";
+import { isReactive, isReadonly, reactive, readonly, shallowReadonly } from "../src/reactive";
 import { isProxy } from "node:util/types";
 
 describe("reactive test", () => {

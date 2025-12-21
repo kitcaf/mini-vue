@@ -1,4 +1,4 @@
-import { mutableHandlers, readonlyHandlers } from "./baseHandlers"
+import { mutableHandlers, readonlyHandlers, shallowReadonlyHandlers } from "./baseHandlers"
 import { track, trigger } from "./effect"
 /**
  * ReactiveObject：
@@ -13,6 +13,7 @@ export const enum ReactiveFlag {
 
 export const reactiveMap = new WeakMap<Object, any>()
 export const readOnlyMap = new WeakMap<Object, any>()
+export const shallowReadonlyMap = new WeakMap();
 
 /**
  * reactive 核心就是返回对对象的Proxy
@@ -28,6 +29,10 @@ export function reactive(raw: any) {
  */
 export function readonly(raw: any) {
     return createActiveObject(raw, readonlyHandlers, readOnlyMap)
+}
+
+export function shallowReadonly(raw: any) {
+    return createActiveObject(raw, shallowReadonlyHandlers, shallowReadonlyMap);
 }
 
 /**
