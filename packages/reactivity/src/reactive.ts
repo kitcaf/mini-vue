@@ -11,12 +11,15 @@ export const enum ReactiveFlag {
     IS_READONLY = "__v_isReadonly"
 }
 
+export const reactiveMap = new WeakMap<Object, any>()
+export const readOnlyMap = new WeakMap<Object, any>()
+
 /**
  * reactive 核心就是返回对对象的Proxy
  * @param raw 
  */
 export function reactive(raw: any) {
-    return createActiveObject(raw, mutableHandlers)
+    return createActiveObject(raw, mutableHandlers, reactiveMap)
 }
 
 /**
@@ -24,7 +27,7 @@ export function reactive(raw: any) {
  * @param raw 
  */
 export function readonly(raw: any) {
-    return createActiveObject(raw, readonlyHandlers)
+    return createActiveObject(raw, readonlyHandlers, readOnlyMap)
 }
 
 /**
@@ -51,6 +54,15 @@ export function isProxy(value: any) {
 }
 
 // 抽离通用的 Proxy 创建逻辑
-function createActiveObject(raw: any, baseHandlers: any) {
-    return new Proxy(raw, baseHandlers);
+function createActiveObject(raw: any, baseHandlers: any, proxyMap: WeakMap<Object, any>) {
+    // 查询一下缓存命中
+    const exsitProxy = proxyMap.get(raw)
+    if (exsitProxy) {
+        return exsitProxy
+    }
+
+    //加入到缓存中
+    const proxy = new Proxy(raw, baseHandlers);
+    proxyMap.set(raw, proxy)
+    return proxy
 }

@@ -23,4 +23,19 @@ describe("reactive test", () => {
         expect(isProxy(user)).toBe(false)
     })
 
+    it("should return same proxy for the same target", () => {
+        const original = { foo: 1 };
+        // 第一次调用：创建并缓存
+        const observedA = reactive(original);
+
+        // 第二次调用：应该直接返回缓存
+        const observedB = reactive(original);
+
+        // 【核心断言】：检查引用是否严格相等
+        expect(observedA).toBe(observedB);
+
+        // 同时也验证一下它确实是响应式的
+        expect(isReactive(observedB)).toBe(true);
+    })
+
 })
