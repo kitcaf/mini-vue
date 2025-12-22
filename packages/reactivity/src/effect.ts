@@ -113,7 +113,7 @@ export function track(target: any, key: String | symbol) {
 }
 
 // 抽离具体的收集逻辑，方便后续复用
-function trackEffects(dep: Set<ReactiveEffect>) {
+export function trackEffects(dep: Set<ReactiveEffect>) {
     //activatEffect和判重
     if (activatEffect && !dep.has(activatEffect)) {
         // 1. 正向收集：Dep -> Effect
@@ -135,7 +135,7 @@ export function trigger(target: any, key: String | symbol) {
     triggerEffects(dep)
 }
 
-function triggerEffects(dep: Set<ReactiveEffect>) {
+export function triggerEffects(dep: Set<ReactiveEffect>) {
     if (dep) {
         for (const effect of dep) {//Set类型的for循环, of
             if (effect.scheduler)
