@@ -17,6 +17,7 @@ class RefImpl {
      */
     private _rawValue: any;
     public dep?: Set<ReactiveEffect>;
+    public __v_isRef = true
 
     constructor(value: any) {
         this._rawValue = value
@@ -42,6 +43,34 @@ class RefImpl {
     }
 }
 
+/**
+ * proxyRefs代理某个对象，可以将ref属性值unref
+ * @param objectWithRefs 是一个对象：对象里面可能有ref对象属性
+ */
+export function proxyRefs(objectWithRefs: any) {
+    return new Proxy(objectWithRefs, {
+        get(target, key, receiver) {
+            return unRef(Reflect.get(target, key, receiver))
+        },
+
+        // 也是要处理一下set，ref时将value加上
+        set(target, key, newValue, receiver) {
+            const oldValue = target[key]
+
+            /**
+             * 解决修改值不加value的修改：（防止 Ref 被意外杀掉）
+             * 如果原来的值是 Ref，且新来的值【不是】Ref
+             * 其实意味这用户想修改Ref的.value，而不是想替换掉整个Ref
+             */
+            if (isRef(oldValue) && !isRef(newValue)) {
+                oldValue.value = newValue;
+                return true;
+            }
+            return Reflect.set(target, key, newValue, receiver)
+        },
+    })
+}
+
 function trackRefValue(ref: RefImpl) {
     trackEffects(ref.dep!)
 }
@@ -59,5 +88,13 @@ export function ref(value: any) {
     return new RefImpl(value);
 }
 
+export function isRef(ref: any) {
+    // 还是!! 需要将undefined 转换false
+    return !!(ref && ref.__v_isRef === true)
+}
+
+export function unRef(ref: any) {
+    return isRef(ref) ? ref.value : ref
+}
 
 

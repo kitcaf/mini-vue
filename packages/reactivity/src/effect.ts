@@ -114,7 +114,7 @@ export function track(target: any, key: String | symbol) {
 
 // 抽离具体的收集逻辑，方便后续复用
 export function trackEffects(dep: Set<ReactiveEffect>) {
-    //activatEffect和判重
+    //activatEffect和判重（其实每次依赖更新的时候-都会进入到track）
     if (activatEffect && !dep.has(activatEffect)) {
         // 1. 正向收集：Dep -> Effect
         dep.add(activatEffect)
