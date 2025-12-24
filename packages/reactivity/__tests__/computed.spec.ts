@@ -2,6 +2,7 @@ import { computed } from "../src/computed";
 import { effect } from "../src/effect";
 import { reactive } from "../src/reactive";
 import { describe, expect, it, vi } from "vitest";
+import { ref } from "../src/ref";
 
 describe("computed", () => {
     it("should compute lazily", () => {
@@ -43,5 +44,23 @@ describe("computed", () => {
         // 修改底层数据 -> computed 变脏 -> 触发外层 effect
         value.foo = 2;
         expect(dummy).toBe(2);
+    });
+
+    it("Example of branch switching", () => {
+        const flag = ref(true)
+        const a = ref(10)
+        const b = ref(20)
+        const c = computed(() => {
+            return flag.value ? a.value : b.value
+        })
+        let dummy
+        effect(() => {
+            dummy = c.value
+        })
+        expect(dummy).toBe(10)
+        flag.value = false
+        expect(dummy).toBe(20)
+        b.value = 40
+        expect(dummy).toBe(40)
     });
 });
