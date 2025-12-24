@@ -16,8 +16,9 @@ class RefImpl {
      * Proxy 对象不等于被代理的原生对象不相同，导致组件重新渲染
      */
     private _rawValue: any;
-    public dep?: Set<ReactiveEffect>;
-    public __v_isRef = true
+    readonly dep?: Set<ReactiveEffect>;
+    readonly __v_isRef = true
+
 
     constructor(value: any) {
         this._rawValue = value
@@ -71,11 +72,11 @@ export function proxyRefs(objectWithRefs: any) {
     })
 }
 
-function trackRefValue(ref: RefImpl) {
+export function trackRefValue(ref: any) {
     trackEffects(ref.dep!)
 }
 
-function triggerRefValue(ref: RefImpl) {
+export function triggerRefValue(ref: any) {
     triggerEffects(ref.dep!);
 }
 

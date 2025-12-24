@@ -109,5 +109,9 @@ describe("proxyRefs", () => {
         proxyUser.name = "xiaoming";
         expect(proxyUser.name).toBe("xiaoming");
         expect(user.name).toBe("xiaoming");
+
+        //4. 修改ref属性（保护ref引用消失）
+        proxyUser.age = 10 // 这个时候其实用户想的是修改ref中的.value
+        expect(proxyUser.age).toBe(10)
     });
 });
