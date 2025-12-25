@@ -115,6 +115,14 @@ export function toRef(object: any, key: string) {
     return new ObjectRefImpl(object, key)
 }
 
+export function toRefs(object: any) {
+    const ret: any = Array.isArray(object) ? new Array(object.length) : {}
+    for (const key in object) {
+        ret[key] = toRef(object, key)
+    }
+    return ret
+}
+
 export function trackRefValue(ref: any) {
     trackEffects(ref.dep!)
 }

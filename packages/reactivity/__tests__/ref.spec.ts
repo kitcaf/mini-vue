@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { effect } from "../src/effect";
-import { isRef, proxyRefs, ref, toRef, unRef } from "../src/ref";
+import { isRef, proxyRefs, ref, toRef, toRefs, unRef } from "../src/ref";
 import { reactive } from "../src/reactive";
 
 describe("ref", () => {
@@ -141,6 +141,37 @@ describe("ref", () => {
         refBar.value = 2;
         expect(obj.bar).toBe(2);
         expect(dummy).toBe(2);
+    });
+
+    it("toRefs", () => {
+        const state = reactive({
+            foo: 1,
+            bar: 2,
+        });
+
+        const { foo, bar } = toRefs(state);
+
+        expect(isRef(foo)).toBe(true);
+        expect(isRef(bar)).toBe(true);
+        expect(foo.value).toBe(1);
+        expect(bar.value).toBe(2);
+
+        // 修改 Ref -> 影响源对象
+        foo.value++;
+        expect(state.foo).toBe(2);
+
+        // 修改源对象 -> 影响 Ref
+        state.bar++;
+        expect(bar.value).toBe(3);
+
+        const plainObj = {
+            ate: 1
+        }
+
+        const { ate } = toRefs(plainObj);
+        expect(isRef(ate)).toBe(true);
+        expect(ate.value).toBe(1);
+
     });
 });
 
