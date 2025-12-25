@@ -1,6 +1,6 @@
 import { hasChanged, isObject } from "@mini-vue/shared";
 import { ReactiveEffect, trackEffects, triggerEffects } from "./effect";
-import { reactive } from "./reactive";
+import { reactive, toRaw } from "./reactive";
 
 //packages/reactivity/src/ref.ts
 class RefImpl {
@@ -74,7 +74,6 @@ export function proxyRefs(objectWithRefs: any) {
 
 class ObjectRefImpl {
     public __v_isRef = true; // ref标志
-    public _shallow: boolean = false; // 浅对象新增标志位
 
     constructor(
         public _object: any,
@@ -99,13 +98,16 @@ class ObjectRefImpl {
          * 普通对象没有 Proxy 帮我们拦截 setter
          * 必须手动判断：如果原值是 Ref，我们要更新 Ref.value
          */
-        const val = this._object[this._key];
-        if (isRef(val) && !isRef(newValue)) { //说明它是普通对象或者newValue不是ref
+        const raw = toRaw(this._object)
+        const val = raw[this._key]
+
+        //普通对象和reactive中的ref变量 直接处理
+        if (isRef(val) && !isRef(newValue)) {
             val.value = newValue
-        } else { // reactive对象 
+        } else {
+            //普通对象和reactive中的普通变量；既有响应式又有正常变量的修改
             this._object[this._key] = newValue
         }
-
     }
 }
 

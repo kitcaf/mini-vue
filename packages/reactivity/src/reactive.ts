@@ -63,7 +63,7 @@ export function isProxy(value: any) {
  * 
  * @param observed 
  */
-export function toRaw(observed: any): void {
+export function toRaw(observed: any): any {
     /**
      * 普通对象 返回 underfind 
      * reactive proxy对象 返回target
