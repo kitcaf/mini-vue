@@ -6,8 +6,8 @@ import { reactive, toRaw } from "./reactive";
 class RefImpl {
     private _value: any;
     /**
-     * _rawValue保留最原始的数据；Proxy 对象不等于被代理的原生对象
-     * 如果返回的Proxy 对象，那么rawValue就是被代理的原生对象
+     * _value保留最原始的数据；Proxy 对象不等于被代理的原生对象
+     * 如果返回的Proxy 对象，那么_value就是被代理的原生对象
      * 
      * 如果不怎么写？
      * const obj = { foo: 1 };

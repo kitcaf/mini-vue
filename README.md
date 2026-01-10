@@ -1,8 +1,8 @@
 ## 项目介绍 | project introduction
 
-本项目是笔者在深入学习 Vue 3 源码过程中的实战记录与总结。
+本项目是笔者在**深入构建 mini Vue 3 过程中的实战记录与详细文档**。
 
-写在前面： 由于个人水平有限，且 Vue 源码博大精深，本项目中的代码实现或文档理解难免会有偏差甚至错误。 如果您在阅读过程中发现任何问题，或者有更好的实现思路，非常热烈地欢迎您提交 Issue 或 Pull Request 指正。您的每一次反馈，都是对我们共同进步的巨大帮助！
+写在前面：由于个人水平有限（**但是一定保证精简核心，让大家都有收获**），且 Vue 源码博大精深，本项目中的代码实现或文档理解难免会有偏差甚至错误。 如果您在阅读过程中发现任何问题，或者有更好的实现思路，非常热烈地欢迎您提交 Issue 或 Pull Request 指正。您的每一次反馈，都是对我们共同进步的巨大帮助！
 
 ## 学习路线 | Roadmap
 
@@ -16,6 +16,8 @@
 
 ## 项目目录 | project directory
 
+持续更新中...
+
 > 目录生成工具：https://github.com/kitcaf/repotoc
 <!--toc-->
 - 一、环境与基础
@@ -25,7 +27,7 @@
   - 2.1 Reactivity 核心
     - [reactivity 的核心流程](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.1%20Reactivity%20%E6%A0%B8%E5%BF%83.md)
     - [Reactivity的基础实现](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.2%20Reactivity%E7%9A%84%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0.md)
-    - [2.1.3 实现 effect 函数返回 runner](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.3%20%E5%AE%9E%E7%8E%B0%20effect%20%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%20runner.md)
+    - [实现 effect 函数返回 runner](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.3%20%E5%AE%9E%E7%8E%B0%20effect%20%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%20runner.md)
     - [实现 effect 的 stop 功能 & 优化 stop 功能](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.4%20%E5%AE%9E%E7%8E%B0%20effect%20%E7%9A%84%20stop%20%E5%8A%9F%E8%83%BD%20&%20%E4%BC%98%E5%8C%96%20stop%20%E5%8A%9F%E8%83%BD.md)
     - [effect防止死循环（无限递归）](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.5%20effect%E9%98%B2%E6%AD%A2%E6%AD%BB%E5%BE%AA%E7%8E%AF%EF%BC%88%E6%97%A0%E9%99%90%E9%80%92%E5%BD%92%EF%BC%89.md)
     - [实现 effect 的 scheduler 功能](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.1%20Reactivity%20%E6%A0%B8%E5%BF%83/2.1.6%20%E5%AE%9E%E7%8E%B0%20effect%20%E7%9A%84%20scheduler%20%E5%8A%9F%E8%83%BD.md)
@@ -45,9 +47,11 @@
   - 2.4 Computed
     - [基础实现](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.4%20Computed/2.4.1%20%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0.md)
     - [Computed 矛盾的选择](docs/%E4%BA%8C%E3%80%81%E5%93%8D%E5%BA%94%E5%BC%8F%E7%B3%BB%E7%BB%9F/2.4%20Computed/2.4.2%20Computed%20%E7%9F%9B%E7%9B%BE%E7%9A%84%E9%80%89%E6%8B%A9.md)
+- 三、运行时
+  - [运行时概述](docs/%E4%B8%89%E3%80%81%E8%BF%90%E8%A1%8C%E6%97%B6/3.1%20%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A6%82%E8%BF%B0%E3%80%90%E9%87%8D%E8%A6%81%E3%80%91.md)
 - [index](docs/index.md)
 
-<!--tocEnd:offset=29-->
+<!--tocEnd:offset=31-->
 
 ## 致谢 | Acknowledgements
 
