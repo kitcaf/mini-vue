@@ -12,8 +12,9 @@ export function createRenderer(option: any) {
     // 表现形式上是节点但有children变量本质就是VNode树
     // n2 新VNode（虚拟节点树）
     // contianer 容器 - 就是挂载的div
-    function patch(n1, n2, container) {
+    function patch(n1: any, n2: any, container: any) {
         //等待实现
+        console.log("Patch 逻辑被触发, 开始处理 VNode:", n2);
     }
 
     return {

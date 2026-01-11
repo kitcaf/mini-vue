@@ -1,3 +1,4 @@
+import { createVNode } from "./vnode"
 
 /**
  * createAppAPI:
@@ -6,17 +7,14 @@
  * * @param render - 由 Renderer 传入的具体渲染函数
  */
 export function createAppAPI(
-    render
+    render: { (vnode: any, container: any): void; (arg0: { type: any; props: any; children: any; el: null }, arg1: any): void }
 ) {
-    return function createApp(rootComponent) {
+    return function createApp(rootComponent: any) {
         return {
             // 核心挂载方法 rootContainer 挂载的DOM对象
-            mount(rootContainer) {
+            mount(rootContainer: Element) {
                 // 1. rootComponent 转换为虚拟节点
-                // 伪代码
-                const vnode = {
-                    type: rootComponent
-                };
+                const vnode = createVNode(rootComponent)
                 // 2. 触发渲染核心，将vnode + rootContainer构成
                 // vnode树，然后转换为真实DOM，显示在页面上
                 render(vnode, rootContainer)
